@@ -51,6 +51,9 @@
                     </div>
                     <div class="bulletin">
                         <p class="content">{{seller.bulletin}}</p>
+                        <p class="content">{{seller.bulletin}}</p>
+                        <p class="content">{{seller.bulletin}}</p>
+                        <p class="content">{{seller.bulletin}}</p>
                     </div>
                 </div>
             </div>
