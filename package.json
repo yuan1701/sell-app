@@ -1,7 +1,7 @@
 {
   "name": "sell",
   "version": "1.0.0",
-  "description": "sell app",
+  "description": "饿了么外卖app",
   "author": "ustbhuangyi <280309453@qq.com>",
   "private": true,
   "scripts": {
