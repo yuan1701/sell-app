@@ -3,11 +3,12 @@
         <div class="content">
             <div class="content-left">
                 <div class="logo-wrapper">
-                    <div class="logo">
-                        <span class="icon-shopping_cart"></span>
+                    <div class="logo" :class="{'highlight':totalCount>0}">
+                        <span class="icon-shopping_cart" :class="{'highlight':totalCount>0}"></span>
                     </div>
+                    <div class="num" v-show="totalCount>0">{{totalCount}}</div>
                 </div>
-                <div class="price">￥0</div>
+                <div class="price" :class="{'highlight':totalPrice>0}">￥{{totalPrice}}</div>
                 <div class="desc">另需配送费￥{{deliveryPrice}}</div>
             </div>
             <div class="content-right">
@@ -19,6 +20,17 @@
 <script  type="text/ecmascript-6">
 export default {
     props: {
+        selectFoods: {
+            type: Array,
+            default() {
+                return [
+                    {
+                        // price: 9,
+                        // count: 1
+                    }
+                ];
+            }
+        },
         deliveryPrice: {
             type: Number,
             default: 0
@@ -26,6 +38,22 @@ export default {
         minPrice: {
             type: Number,
             default: 0
+        }
+    },
+    computed: {
+        totalPrice() {
+            let total = 0;
+            this.selectFoods.forEach((food) => {
+                total += food.price * food.count;
+            });
+            return total;
+        },
+        totalCount() {
+            let count = 0;
+            this.selectFoods.forEach((food) => {
+                count += food.count;
+            });
+            return count;
         }
     }
 }
@@ -63,10 +91,30 @@ export default {
                     border-radius 50%
                     background #2b343c
                     text-align center
+                    &.highlight
+                        background rgb(0,160,220)
+                    
                     .icon-shopping_cart
                         font-size 24px
                         line-height 44px
                         color #80858a
+                        &.highlight
+                            color #fff
+                        
+                .num 
+                    position absolute
+                    top 0
+                    right 0
+                    width 25px
+                    height 16px
+                    line-height 16px
+                    text-align center
+                    border-radius 16px
+                    font-size 9px
+                    font-weight 700
+                    background rgb(240,20,20)
+                    color #fff
+                    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.4)
             .price
                 display inline-block
                 vertical-align top
@@ -77,6 +125,8 @@ export default {
                 box-sizing border-box
                 font-size 16px
                 font-weight 700
+                &.highlight
+                    color #fff
             .desc
                 display inline-block
                 margin 12px 0 0 12px
