@@ -214,6 +214,7 @@ export default {
         z-index 100
         width 100%
         height 100%
+        overflow auto
         transition all 0.5s
         //实现模糊背景
         backdrop-filter blur(10)

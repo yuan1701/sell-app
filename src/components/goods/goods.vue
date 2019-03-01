@@ -2,7 +2,7 @@
     <div class="goods">
         <div class="menu-wrapper" v-el:menu-wrapper >
            <ul>
-               <li v-for="item in goods" :key="item.id" class="menu-item">
+               <li v-for="item in goods" :key="item.id" class="menu-item" :class="{'current':currentIndex===$index}" @click="selectMenu($index,$event)">
                     <span class="text">   
                         <span class="icon" v-show="item.type>0" :class="classMap[item.type]"></span>
                     {{item.name}} </span>
@@ -11,7 +11,7 @@
         </div> 
         <div class="foods-wrapper" v-el:food-wrapper>
             <ul>
-                <li v-for="item in goods" :key="item.id" class="food-list">
+                <li v-for="item in goods" :key="item.id" class="food-list food-list-hook">
                     <h1 class="title">{{item.name}}</h1>
                     <ul>
                         <li v-for="food in item.foods" :key="food.id" class="food-item">
@@ -51,7 +51,21 @@ export default {
     },
     data() {
         return {
-            goods: {}
+            goods: [],
+            listHeight: [],
+            scrollY: 0
+        }
+    },
+    computed: {
+        currentIndex() { // 当前左侧索引位置
+            for (let i = 0; i < this.listHeight.length; i++) {
+                let height1 = this.listHeight[i];
+                let height2 = this.listHeight[i + 1];
+                if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+                    return i;
+                }
+            }
+            return;
         }
     },
     created() {
@@ -59,17 +73,45 @@ export default {
             response = response.body;
             if (response.errno === ERR_OK) {
                 this.goods = response.data;
-                this.$nextTick(() => {
-                    this._initScroll()
+                this.$nextTick(() => { // 保证dom已经渲染好了
+                    this._initScroll();
+                    this._calculateHeight();
                 })
             }
         });
         this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
     },
     methods: {
+        selectMenu(index, event) {
+            if (!event._constructed) { // event._constructed默认派发事件为true,PC端没有这个属性--处理PC端会点击两次问题
+                return;
+            }
+            let foodList = this.$els.foodWrapper.getElementsByClassName("food-list-hook");
+            let el = foodList[index]
+            this.foodScroll.scrollToElement(el, 300)
+        },
         _initScroll() {
-            this.menuScroll = new BScroll(this.$els.menuWrapper, {});
-            this.foodScroll = new BScroll(this.$els.foodWrapper, {});
+            // 添加滚动效果
+            this.menuScroll = new BScroll(this.$els.menuWrapper, {
+                click: true // 点击
+            });
+            this.foodScroll = new BScroll(this.$els.foodWrapper, {
+                probeType: 3 // 实时滚动位置
+            });
+            this.foodScroll.on('scroll', (pos) => {
+                this.scrollY = Math.abs(Math.round(pos.y))
+            })
+        },
+        _calculateHeight() { // 计算食物列表高度
+            let foodList = this.$els.foodWrapper.getElementsByClassName("food-list-hook"); // 获得所有食物列表的数组
+            console.log(foodList)
+            let height = 0;
+            this.listHeight.push(height);
+            for (let i = 0; i < foodList.length; i++) {
+                let item = foodList[i];
+                height += item.clientHeight; // (内容)可见区域高累加
+                this.listHeight.push(height);
+            }
         }
     },
     components: {
@@ -98,6 +140,14 @@ export default {
                 height 54px
                 line-height 14px
                 padding 0 12px
+                &.current
+                    position relative
+                    z-index 10
+                    margin-top -1px
+                    background #ffffff
+                    font-weight 700
+                    .text
+                        border-none()
                 .icon
                     display inline-block
                     width 12px
