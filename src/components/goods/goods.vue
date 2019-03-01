@@ -1,6 +1,6 @@
 <template>
     <div class="goods">
-       <div class="menu-wrapper" v-el:menu-wrapper >
+        <div class="menu-wrapper" v-el:menu-wrapper >
            <ul>
                <li v-for="item in goods" :key="item.id" class="menu-item">
                     <span class="text">   
@@ -35,14 +35,20 @@
                 </li>
             </ul>
         </div> 
+        <shopcar :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcar>
+
     </div>
 </template>
 
 <script  type="text/ecmascript-6">
 import BScroll from "better-scroll";
+import shopcar from "components/shopcar/shopcar"
 const ERR_OK = 0;
 
 export default {
+    props: {
+        seller: {}
+    },
     data() {
         return {
             goods: {}
@@ -65,6 +71,9 @@ export default {
             this.menuScroll = new BScroll(this.$els.menuWrapper, {});
             this.foodScroll = new BScroll(this.$els.foodWrapper, {});
         }
+    },
+    components: {
+        shopcar
     }
 };
 </script>
