@@ -28,6 +28,9 @@
                                     <span class="now">￥{{food.price}}</span>
                                     <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                                 </div>
+                                <div class="cartcontrol-wrapper">
+                                    <cartcontrol :food='food'></cartcontrol>
+                                </div>
                             </div>
                         </li>
                     </ul>
@@ -42,7 +45,9 @@
 
 <script  type="text/ecmascript-6">
 import BScroll from "better-scroll";
-import shopcar from "components/shopcar/shopcar"
+import shopcar from "components/shopcar/shopcar";
+import cartcontrol from "components/cartcontrol/cartcontrol";
+
 const ERR_OK = 0;
 
 export default {
@@ -96,6 +101,7 @@ export default {
                 click: true // 点击
             });
             this.foodScroll = new BScroll(this.$els.foodWrapper, {
+                click: true, // 点击
                 probeType: 3 // 实时滚动位置
             });
             this.foodScroll.on('scroll', (pos) => {
@@ -104,7 +110,6 @@ export default {
         },
         _calculateHeight() { // 计算食物列表高度
             let foodList = this.$els.foodWrapper.getElementsByClassName("food-list-hook"); // 获得所有食物列表的数组
-            console.log(foodList)
             let height = 0;
             this.listHeight.push(height);
             for (let i = 0; i < foodList.length; i++) {
@@ -115,7 +120,8 @@ export default {
         }
     },
     components: {
-        shopcar
+        shopcar,
+        cartcontrol
     }
 };
 </script>
@@ -222,7 +228,10 @@ export default {
                             text-decoration line-through
                             font-size 10px
                             color rgb(147,153,159)
-                        
+                    .cartcontrol-wrapper
+                        position absolute
+                        right 0
+                        bottom 12px
 
 </style>
 
