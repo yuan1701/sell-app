@@ -38,7 +38,7 @@
                 </li>
             </ul>
         </div> 
-        <shopcar :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcar>
+        <shopcar v-ref:shopcar :select-foods="selectFoods()" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcar>
 
     </div>
 </template>
@@ -91,9 +91,14 @@ export default {
             if (!event._constructed) { // event._constructed默认派发事件为true,PC端没有这个属性--处理PC端会点击两次问题
                 return;
             }
+            // v-el访问dom
             let foodList = this.$els.foodWrapper.getElementsByClassName("food-list-hook");
             let el = foodList[index]
             this.foodScroll.scrollToElement(el, 300)
+        },
+        _drop(target) {
+            // v-ref访问子组件
+            this.$refs.shopcar.drop(target)
         },
         _initScroll() {
             // 添加滚动效果
@@ -117,11 +122,27 @@ export default {
                 height += item.clientHeight; // (内容)可见区域高累加
                 this.listHeight.push(height);
             }
+        },
+        selectFoods() {
+            let foods = [];
+            this.goods.forEach(good => {
+                good.foods.forEach(food => {
+                    if (food.count) {
+                        foods.push(food)
+                    }
+                })
+            });
+            return foods;
         }
     },
     components: {
         shopcar,
         cartcontrol
+    },
+    events: {
+        'cart.add'(target) {
+            this._drop(target);
+        }
     }
 };
 </script>
