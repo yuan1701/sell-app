@@ -2,7 +2,7 @@
   "name": "sell",
   "version": "1.0.0",
   "description": "饿了么外卖app",
-  "author": "ustbhuangyi <280309453@qq.com>",
+  "author": "yuanyun <1349281070@qq.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
