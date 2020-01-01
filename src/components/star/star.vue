@@ -9,6 +9,7 @@ const CLS_ON = 'on';
 const CLS_OFF = 'off';
 const CLS_HALF = 'half';
 export default {
+  name: 'star',
   props: {
     size: {
       type: Number

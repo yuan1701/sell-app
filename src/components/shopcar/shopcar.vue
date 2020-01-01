@@ -3,7 +3,7 @@
         <div class="content">
             <div class="content-left">
                 <div class="logo-wrapper">
-                    <div class="logo" :class="{'highlight':totalCount>0}">
+                    <div class="logo" @click="showSelectDetails" :class="{'highlight':totalCount>0}">
                         <span class="icon-shopping_cart" :class="{'highlight':totalCount>0}"></span>
                     </div>
                     <div class="num" v-show="totalCount>0">{{totalCount}}</div>
@@ -12,7 +12,7 @@
                 <div class="desc">另需配送费￥{{deliveryPrice}}</div>
             </div>
             <div class="content-right">
-                <div class="pay" :class="payClass">{{payDesc}} </div>
+                <div @click="goPay" class="pay" :class="payClass">{{payDesc}} </div>
             </div>
         </div>
         <div class="ball-container">
@@ -87,8 +87,15 @@ export default {
         }
     },
     methods: {
+        // 购物车详情
+        showSelectDetails() {
+            console.log(this.selectFoods)
+        },
+        // 去支付
+        goPay(price) {
+            console.log('共' + this.totalPrice + '元')
+        },
         drop(el) {
-           console.log(el);
            for (let i = 0; i < this.balls.length; i++) {
                 let ball = this.balls[i];
                 if (!ball.show) {

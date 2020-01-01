@@ -14,7 +14,7 @@
                 <li v-for="item in goods" :key="item.id" class="food-list food-list-hook">
                     <h1 class="title">{{item.name}}</h1>
                     <ul>
-                        <li v-for="food in item.foods" :key="food.id" class="food-item">
+                        <li @click="selectFood(food, $event)" v-for="food in item.foods" :key="food.id" class="food-item">
                             <div class="icon">
                                 <img :src="food.icon" alt="">
                             </div>
@@ -39,6 +39,7 @@
             </ul>
         </div> 
         <shopcar v-ref:shopcar :select-foods="selectFoods()" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcar>
+        <food v-ref:food :food="selectedFood"></food>
 
     </div>
 </template>
@@ -47,6 +48,7 @@
 import BScroll from "better-scroll";
 import shopcar from "components/shopcar/shopcar";
 import cartcontrol from "components/cartcontrol/cartcontrol";
+import food from "components/food/food";
 
 const ERR_OK = 0;
 
@@ -58,7 +60,8 @@ export default {
         return {
             goods: [],
             listHeight: [],
-            scrollY: 0
+            scrollY: 0,
+            selectedFood: {}
         }
     },
     computed: {
@@ -74,7 +77,8 @@ export default {
         }
     },
     created() {
-        this.$http.get("/api/goods").then(response => {
+        const dev = process.env.NODE_ENV === "development"
+        dev && this.$http.get("/api/goods").then(response => {
             response = response.body;
             if (response.errno === ERR_OK) {
                 this.goods = response.data;
@@ -84,9 +88,24 @@ export default {
                 })
             }
         });
+        if (!dev) {
+            this.goods = require('../../../data.json').goods
+            this.$nextTick(() => { // 保证dom已经渲染好了
+                this._initScroll();
+                this._calculateHeight();
+            })
+        }
         this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
     },
     methods: {
+        selectFood(data, event) {
+            if (!event._constructed) { // event._constructed默认派发事件为true,PC端没有这个属性--处理PC端会点击两次问题
+                return;
+            }
+            this.selectedFood = data
+            this.$refs.food.show()
+            console.log(data)
+        },
         selectMenu(index, event) {
             if (!event._constructed) { // event._constructed默认派发事件为true,PC端没有这个属性--处理PC端会点击两次问题
                 return;
@@ -137,7 +156,8 @@ export default {
     },
     components: {
         shopcar,
-        cartcontrol
+        cartcontrol,
+        food
     },
     events: {
         'cart.add'(target) {
@@ -220,6 +240,10 @@ export default {
                 .icon
                     flex 0 0 57px
                     margin-right 10px
+                    img
+                        max-width 100px
+                        max-height 100px
+                        border-radius 4px
                 .content
                     flex 1
                     .name

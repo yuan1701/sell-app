@@ -34,12 +34,16 @@ export default {
     };
   },
   created() {
-    this.$http.get("/api/seller?id=" + this.seller.id).then(response => {
+    const dev = process.env.NODE_ENV === "development"
+    dev && this.$http.get("/api/seller?id=" + this.seller.id).then(response => {
       response = response.body;
       if (response.errno === ERR_OK) {
         this.seller = Object.assign({}, this.seller, response.data);
       }
     });
+    if (!dev) {
+      this.seller = require('../data.json').seller
+    }
   },
   components: {
     "v-header": header
