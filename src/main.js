@@ -12,6 +12,7 @@ Vue.use(VueRouter);
 Vue.use(VueResource);
 
 let app = Vue.extend(App);
+Vue.extend(ratings);
 
 let router = new VueRouter({
 	linkActiveClass: 'active'
